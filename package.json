@@ -1,0 +1,24 @@
+{
+  "name": "eventador",
+  "version": "1.0.0",
+  "description": "for making those pesky events sexy",
+  "main": "./src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lewibs/eventador.git"
+  },
+  "author": "lewibs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lewibs/eventador/issues"
+  },
+  "homepage": "https://github.com/lewibs/eventador#readme",
+  "dependencies": {
+    "uuid": "^8.3.2",
+    "window-or-global": "^1.0.1"
+  }
+}
