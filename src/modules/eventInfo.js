@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 function eventInfo(props={}) {
+
     let obj = {};
     
     obj.id = props.id               || uuidv4();

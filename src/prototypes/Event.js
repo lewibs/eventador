@@ -1,6 +1,9 @@
+console.log(Event);
+
 Event.eventador = Event.eventador || {};
 
-Event.eventador.format = function(event) {
+Event.eventador.format = function(event = {}) {
+
     if (event instanceof CustomEvent) {
         let key = event.detail.type;
         event = event.detail;

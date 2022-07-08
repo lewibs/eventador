@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
-import keylogger from '../modules/Keylogger';
-import historyInfo from '../modules/historyInfo';
+import keylogger from '../modules/Keylogger.js';
+import eventInfo from '../modules/eventInfo.js';
 
 const defaultOptions = ()=>{
-    return Object.apply({}, { 
+    return JSON.parse(JSON.stringify({ 
         capture:false,
         useCapture:false,
         requiredKeys:[],
         maxCalls:false,
-    })
+    }))
 };
 
 EventTarget.prototype.eventador = EventTarget.prototype.eventador || {};
@@ -17,17 +17,17 @@ EventTarget.prototype.eventador.events = EventTarget.prototype.eventador.events 
 
 EventTarget.prototype.eventador.keylogger = EventTarget.prototype.eventador.keylogger || keylogger;
 
-EventTarget.prototype.eventador.clasicRemoveEventListener = EventTarget.prototype.eventador.clasicRemoveEventListener || EventTarget.prototype.removeEventListener;
-
-EventTarget.prototype.eventador.clasicAddEventListener = EventTarget.prototype.eventador.clasicAddEventListener || EventTarget.prototype.addEventListener;
-
 EventTarget.prototype.eventador.removeEvent = EventTarget.prototype.eventador.removeEvent || function(target, id) {
-    let event = target.events[id];
+    let event = target.eventador.events[id];
     event.removed = true;
-    delete target.events[id];
+    delete target.eventador.events[id];
     target.removeEventListener(event.trigger, event.event);
     return event;
 }
+
+EventTarget.prototype.clasicRemoveEventListener = EventTarget.prototype.clasicRemoveEventListener || EventTarget.prototype.removeEventListener;
+
+EventTarget.prototype.clasicAddEventListener = EventTarget.prototype.clasicAddEventListener || EventTarget.prototype.addEventListener;
 
 EventTarget.prototype.removeEventListener = EventTarget.prototype.removeEventListener || function(event, func, options=defaultOptions()) {
     //backwards compatable :)
@@ -37,16 +37,25 @@ EventTarget.prototype.removeEventListener = EventTarget.prototype.removeEventLis
         options.useCapture = useCapture;
     }
 
-    console.warn('removeEventListener needs to get finished');
-    this.eventador.clasicRemoveEventListener(event, func, options.useCapture);
+    //func is returned when an event is made
+    this.clasicRemoveEventListener(event, func, options.useCapture);
 }
 
 EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=defaultOptions()) {
+    //testing react
+    //if (func.name !== '') {
+    //    this.clasicAddEventListener(event, func, options);
+    //}
+
+
     //backwards compatable :)
     if (typeof options === 'boolean') {
         let capture = options;
         options = defaultOptions();
         options.capture = capture;
+    } else {
+        //for the case that an opject of options are passed in.
+        options = Object.assign(defaultOptions(), options);
     }
 
     let id = uuidv4();
@@ -56,38 +65,36 @@ EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=de
 
         let keysPressed = 0;
         options.requiredKeys.forEach((k)=>{
-            if (this.eventador.keylogger.pressedKeys[v]) {
+            if (this.eventador.keylogger.pressedKeys[k]) {
                 keysPressed++;
             }
         });
 
-        let eventHistory = this.events[id];
+        let eventHistory = this.eventador.events[id];
         eventHistory.callTime = new Date().getTime();
 
         //triggered will run if required keys is empty too
-        if (keysPressed === requiredKeys.length) {
+        if (keysPressed === options.requiredKeys.length) {
             eventHistory.calls++;
             eventHistory.success = true;
 
             func(e);
 
-            if (options.maxCalls !== false && options.maxCalls <= this.events[id].calls) {
+            if (options.maxCalls !== false && options.maxCalls <= this.eventador.events[id].calls) {
                 eventHistory = this.eventador.removeEvent(this, id);
             }
         } else {
             eventHistory.success = false;
         }
-
-        this.eventador.keylogger.history.push(historyInfo(eventHistory));
     };
 
-    this.events[id] = eventInfo({
+    this.eventador.events[id] = eventInfo({
         id:id,
         trigger: event,
         event: dispatch,
     });
 
-    this.eventador.clasicAddEventListener(event, dispatch);
+    this.clasicAddEventListener(event, dispatch);
 
     return dispatch;
 }

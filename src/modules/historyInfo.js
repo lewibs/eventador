@@ -1,9 +1,9 @@
-import './Keylogger';
+import root from 'window-or-global';
 
-function historyInfo(props) {
+function historyInfo(eventInfo = {}) {
     let obj = {};
 
-    obj.eventInfo = Object.assign({}, props.eventInfo) || undefined;
+    obj.eventInfo = Object.assign({}, eventInfo);
     obj.keysPressed = Object.assign({}, root.eventador.keylogger.pressedKeys);
 
     return obj;

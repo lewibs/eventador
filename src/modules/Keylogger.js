@@ -1,9 +1,7 @@
-import root from 'window-or-global'
+import root from 'window-or-global';
 
 class Keylogger {
     pressedKeys = {};
-    events = {};
-    history = [];
     
     constructor() {
         //make custom events - nameend and namestart
@@ -27,78 +25,24 @@ class Keylogger {
         this.addEvent('mousemoveend', (e)=>{this.unpressed(e)});
     }
     
-    toString() {
-        return JSON.stringify(this.history);
-    }
-    
-    kill() {
-        Object.keys(this.events).forEach((id)=>{
-            this.removeEvent(id);
-        });
-    }
-    
-    addEvent(trigger, event, requiredKeys = [], maxCalls = false) {
-        let id = uuidv4();
-        
+    addEvent(trigger, event) {
         let dispatch = (e) => {
-            e = this.formatEvent(e);
-            
-            let keysPressed = 0;
-            requiredKeys.forEach((v)=>{
-                if (this.pressedKeys[v]) {
-                    keysPressed++;
-                }
-            });
-            
-            let eventHistory = this.events[id];
-            eventHistory.callTime = new Date().getTime();
-            
-            //triggered. will run if required keys is empty too
-            if (keysPressed === requiredKeys.length) {
-                eventHistory.calls++;
-                eventHistory.success = true;
+            event(Event.eventador.format(e));
+        }
 
-                event(e);
-                
-                if (maxCalls !== false && maxCalls <= this.events[id].calls) {
-                    eventHistory = this.removeEvent(id);
-                }
-            } else {
-                eventHistory.success = false;
-            }
-            
-            this.history.push({
-                eventInfo: Object.assign({}, eventHistory),
-                keysPressed: Object.assign({}, this.pressedKeys),
-            });
-        };
-        
-        this.events[id] = eventInfo({
-            id: id,
-            trigger: trigger,
-            event: dispatch
-        });
-        
-        window.addEventListener(trigger, dispatch);
+        root.addEventListener(trigger, dispatch);
     }
     
     pressed(e) {
         this.pressedKeys[e.key] = true;
+        console.log(this.pressedKeys);
     }
     
     unpressed(e) {
-        delete this.pressedKeys[e.key];   
+        delete this.pressedKeys[e.key];
+        console.log(this.pressedKeys);
     }
-    
-    removeEvent(id) {
-        let event = this.events[id];
-        event.removed = true;
-        delete this.events[id];
-        window.removeEventListener(event.trigger, event.event);
-        return event;
-    }
-    
-    //used to take single call events and give them a start and stop
+
     splitEvent(name) {
         let startName = name + 'start';
         let endName = name + 'end';
@@ -106,39 +50,34 @@ class Keylogger {
         let timer;
         
         let formatCustom = (name, e) => {
-            return new window.CustomEvent(name, {detail: e});
+            return new CustomEvent(name, {detail: e});
         };
         
         let eventEnd = (e)=>{
-            window.dispatchEvent(formatCustom(endName, e));
+            root.dispatchEvent(formatCustom(endName, e));
             timer = undefined;
         };
         
         let eventStart = (e)=>{
             if (timer === undefined) {
-                window.dispatchEvent(formatCustom(startName, e));
+                root.dispatchEvent(formatCustom(startName, e));
             }
             
             clearTimeout(timer);
             timer = setTimeout(()=>{eventEnd(e)}, 100);
         };
         
-        window.addEventListener(name, eventStart);
-        
-        //this is so we can kill the unique events when the keylogger is ended
-        let event = eventInfo({
-            trigger: name,
-            event: eventStart,
-        });
-        
-        this.events[event.id] = event;
+        root.addEventListener(name, eventStart);
     }
 }
 
+//make singleton
 const instance = new Keylogger();
 Object.freeze(instance);
 
-root.eventador = root.eventador || {};
-root.eventador.keylogger = instance;
+//attach to root //causes the eventador prototype on EventTarget to be overwritenm for window events
+//root.eventador = root.eventador || {};
+//root.eventador.keylogger = root.eventador.keylogger || instance;
 
+//export singleton
 export default instance;

@@ -1,5 +1,7 @@
-import root from 'window-or-global'
+import './prototypes/Event.js';
+import './prototypes/EventTarget.js';
+import keylogger from './modules/Keylogger.js';
 
-root.eventador = root.eventador || {};
 
-console.log(g);
+console.log(keylogger)
+console.warn('Eventador: added eventador to the global scope under global.eventador');
