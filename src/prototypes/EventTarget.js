@@ -43,9 +43,9 @@ EventTarget.prototype.removeEventListener = EventTarget.prototype.removeEventLis
 
 EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=defaultOptions()) {
     //testing react
-    //if (func.name !== '') {
-    //    this.clasicAddEventListener(event, func, options);
-    //}
+    if (func.name !== '') {
+        this.clasicAddEventListener(event, func, options);
+    }
 
 
     //backwards compatable :)
