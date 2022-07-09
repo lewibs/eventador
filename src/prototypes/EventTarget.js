@@ -1,3 +1,10 @@
+/*
+decided not to have eventador run in the prototype chain. It is usually not advised to modify it but with the code below I was able to get it working for all 
+non virtual dom frameworks however. useage of events attached to jsx elements is unique in how they run and does not filter
+through this event. The events are saved as text and run in a just in time compiler. meaning... I can make this more robust but less sexy
+by handling this issue another way
+
+
 import { v4 as uuidv4 } from 'uuid';
 import keylogger from '../modules/Keylogger.js';
 import eventInfo from '../modules/eventInfo.js';
@@ -98,3 +105,4 @@ EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=de
 
     return dispatch;
 }
+*/

@@ -1,5 +1,4 @@
-console.log(Event);
-
+/*
 Event.eventador = Event.eventador || {};
 
 Event.eventador.format = function(event = {}) {
@@ -27,3 +26,4 @@ Event.eventador.format = function(event = {}) {
     
     return event;
 }
+*/

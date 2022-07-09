@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
+//probably could have done this using a class instead of the old style but hey why not go
+//retro when it makes life easy
 function eventInfo(props={}) {
 
     let obj = {};
