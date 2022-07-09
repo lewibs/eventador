@@ -1,74 +1,34 @@
-/*
-decided not to have eventador run in the prototype chain. It is usually not advised to modify it but with the code below I was able to get it working for all 
-non virtual dom frameworks however. useage of events attached to jsx elements is unique in how they run and does not filter
-through this event. The events are saved as text and run in a just in time compiler. meaning... I can make this more robust but less sexy
-by handling this issue another way
+import Keylogger from 'lewibs-keylogger';
+import {DEFAULTOPTONS} from '../modules/Eventador';
 
+//make a seperate instance of keylogger since I dont want to use the global one in case that gets paused
+const keylogger = new Keylogger();
 
-import { v4 as uuidv4 } from 'uuid';
-import keylogger from '../modules/Keylogger.js';
-import eventInfo from '../modules/eventInfo.js';
+//a module is only evaluated once meaning it is safe to assign these like so without needing to worry about the proto chain getting too big
+const clasicAddEventListener = EventTarget.prototype.addEventListener;
+const clasicRemoveEventListener = EventTarget.prototype.removeEventListener;
 
-const defaultOptions = ()=>{
-    return JSON.parse(JSON.stringify({ 
-        capture:false,
-        useCapture:false,
-        requiredKeys:[],
-        maxCalls:false,
-    }))
-};
-
-EventTarget.prototype.eventador = EventTarget.prototype.eventador || {};
-
-EventTarget.prototype.eventador.events = EventTarget.prototype.eventador.events || {};
-
-EventTarget.prototype.eventador.keylogger = EventTarget.prototype.eventador.keylogger || keylogger;
-
-EventTarget.prototype.eventador.removeEvent = EventTarget.prototype.eventador.removeEvent || function(target, id) {
-    let event = target.eventador.events[id];
-    event.removed = true;
-    delete target.eventador.events[id];
-    target.removeEventListener(event.trigger, event.event);
-    return event;
-}
-
-EventTarget.prototype.clasicRemoveEventListener = EventTarget.prototype.clasicRemoveEventListener || EventTarget.prototype.removeEventListener;
-
-EventTarget.prototype.clasicAddEventListener = EventTarget.prototype.clasicAddEventListener || EventTarget.prototype.addEventListener;
-
-EventTarget.prototype.removeEventListener = EventTarget.prototype.removeEventListener || function(event, func, options=defaultOptions()) {
-    //backwards compatable :)
+//makes all the options backwards compatable. meaning you wont break a project by adding eventador 
+function formatOptions(options=DEFAULTOPTONS) {
     if (typeof options === 'boolean') {
-        let useCapture = options;
-        options = defaultOptions();
-        options.useCapture = useCapture;
+        options = Object.assign(DEFAULTOPTONS, {useCapture:options});
+    }else {
+        //for the case that an opject of options are passed in.
+        options = Object.assign(DEFAULTOPTONS, options);
     }
 
-    //func is returned when an event is made
+    return options;
+}
+
+EventTarget.prototype.removeEventListener = function(event, func, options) { 
+    options = formatOptions(options);
     this.clasicRemoveEventListener(event, func, options.useCapture);
 }
 
-EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=defaultOptions()) {
-    //testing react
-    if (func.name !== '') {
-        this.clasicAddEventListener(event, func, options);
-    }
-
-
-    //backwards compatable :)
-    if (typeof options === 'boolean') {
-        let capture = options;
-        options = defaultOptions();
-        options.capture = capture;
-    } else {
-        //for the case that an opject of options are passed in.
-        options = Object.assign(defaultOptions(), options);
-    }
-
-    let id = uuidv4();
+EventTarget.prototype.addEventListener = function(event, func=()=>{}, options) {
+    options = formatOptions(options);
 
     let dispatch = (e) => {
-        e = Event.eventador.format();
 
         let keysPressed = 0;
         options.requiredKeys.forEach((k)=>{
@@ -105,4 +65,3 @@ EventTarget.prototype.addEventListener = function(event, func=()=>{}, options=de
 
     return dispatch;
 }
-*/
