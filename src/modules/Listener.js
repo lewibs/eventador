@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import Eventador, {DEFAULTOPTONS} from './Eventador';
 
 class Listener {
     constructor(props={}) {
@@ -11,28 +12,41 @@ class Listener {
         }
 
         if (props.target) {
-            console.log('eventador: target was not provided. This could cause issuses in removing/adding listeners');
+            console.warn('eventador: target was not provided. This could cause issuses in removing/adding listeners');
         }
 
         if (props.options) {
-            console.log('eventador: options should be passed in. May cause removal issues if they aren \'t');
+            console.warn('eventador: options should be passed in. May cause removal issues if they aren \'t');
         }
-
-        this.id = props.id               || uuidv4();
+        
+        this.isListener = true; 
         this.target = props.target       || window;
         this.event = props.event         || undefined;
         this.dispatch = props.dispatch   || undefined;
-        this.options = props.options     || undefined;
+        this.options = props.options     || DEFAULTOPTONS;
+        this.id = props.id               || uuidv4();
         this.calls = props.calls         || 0;
+        this.callLog = props.callLog     || [];
         this.callTimes = props.callTimes || [];
     }
 
-    remove() {
-        this.target.removeEventListener(this.event, this.dispatch, this.options);
-    }
-
     update(e) {
+        this.callLog.push(new CallInfo(e, this.calls++));
 
+        if (this.calls === this.options.max) {
+            return Eventador.removeListener(this.id);
+        } else {
+            return false;
+        }
+    }
+}
+
+class CallInfo {
+    constructor(e, callNo) {
+        this.isCallInfo = true;
+        this.time = new Date().getTime();
+        this.event = e;
+        this.callNo = callNo;
     }
 }
 
