@@ -1,29 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
-import Eventador, {DEFAULTOPTONS} from './Eventador';
+import Eventador, {getDefaultOptions} from './Eventador.js';
 
 class Listener {
     constructor(props={}) {
-        if (props.event) {
+        if (!props.event) {
             throw new Error('eventador: a valid js event must be included as a property');
         }
 
-        if (props.dispatch) {
+        if (!props.dispatch) {
             throw new Error('eventador: a dispatch must be included as a property');
-        }
-
-        if (props.target) {
-            console.warn('eventador: target was not provided. This could cause issuses in removing/adding listeners');
-        }
-
-        if (props.options) {
-            console.warn('eventador: options should be passed in. May cause removal issues if they aren \'t');
         }
         
         this.isListener = true; 
         this.target = props.target       || window;
         this.event = props.event         || undefined;
         this.dispatch = props.dispatch   || undefined;
-        this.options = props.options     || DEFAULTOPTONS;
+        this.options = props.options     || getDefaultOptions();
         this.id = props.id               || uuidv4();
         this.calls = props.calls         || 0;
         this.callLog = props.callLog     || [];

@@ -1,4 +1,5 @@
-import Eventador from "./modules/Eventador";
+import './prototypes/EventTarget.js';
+import Eventador from "./modules/Eventador.js";
 
 export {
     Eventador

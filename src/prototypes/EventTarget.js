@@ -1,9 +1,8 @@
-import Eventador from "../modules/Eventador";
+import Eventador from "../modules/Eventador.js";
 
-//this is added for use later by eventador
-EventTarget.prototype.eventador = {};
-EventTarget.prototype.eventador.clasicAddEventListener = EventTarget.prototype.addEventListener;
-EventTarget.prototype.clasicRemoveEventListener = EventTarget.prototype.removeEventListener;
+EventTarget.prototype.eventadorAddEventListener = EventTarget.prototype.addEventListener;
+
+EventTarget.prototype.eventadorRemoveEventListener = EventTarget.prototype.removeEventListener;
 
 //these are only to filter to eventador
 EventTarget.prototype.removeEventListener = function(event, dispatch, options) { 
@@ -11,5 +10,13 @@ EventTarget.prototype.removeEventListener = function(event, dispatch, options) {
 }
 
 EventTarget.prototype.addEventListener = function(event, dispatch, options) {
-    return Eventador.addListener(event, dispatch, options, this);
+    let failedEvent = event;
+    let failedDispatch = dispatch;
+    let failedOptions = options;
+
+    try {
+        return Eventador.addListener(event, dispatch, options, this);
+    } catch (e) {
+        return this.eventador.clasicAddEventListener(failedEvent, failedDispatch, failedOptions);
+    }
 }
