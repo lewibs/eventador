@@ -1,7 +1,7 @@
-import './prototypes/Event.js';
-import './prototypes/EventTarget.js';
-import keylogger from './modules/Keylogger.js';
+import Eventador from "./modules/Eventador";
 
+export {
+    Eventador
+};
 
-console.log(keylogger)
-console.warn('Eventador: added eventador to the global scope under global.eventador');
+export default Eventador;

@@ -2,15 +2,15 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import Keylogger from 'lewibs-keylogger';
+window.Keylogger = Keylogger.instance.start();
 
 function App() {
-  const [logger, setLogger] = React.useState(new Keylogger());
+  const [logger, setLogger] = React.useState(Keylogger.instance);
   const [toggle, setToggle] = React.useState(false);
 
   const lastHistory = logger.history[logger.history.length - 1] || {};
 
   React.useEffect(()=>{
-    window.logger = logger;
 
     window.addEventListener("keydown", ()=>{
       setToggle(p=>!p);
