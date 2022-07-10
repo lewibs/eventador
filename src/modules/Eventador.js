@@ -11,6 +11,7 @@ const getDefaultOptions = ()=>{
 
         //custom options
         keys:[],
+        pressAll: false,
         max:false,
     }))
 }
@@ -33,7 +34,6 @@ class Eventador{
         let eventadorCallback = (e) => {
             if (arePressed(listener.options)) {
                 callback(e);
-                listener.update(e);
             }
         }
 
@@ -73,8 +73,8 @@ class Eventador{
                 throw new Error('Eventador: makeCallBack must be called within a event trigger on an HTMLElement');
             }
 
-            if (arePressed(listener.options) && !listener.isTerminated) {
-                return listener.sendIt(e);
+            if (arePressed(listener.options) && listener.isTerminated === false) {
+                listener.sendIt(e);
             }
         }
 
@@ -83,18 +83,26 @@ class Eventador{
 }
 
 function arePressed(options) {
-    let keysPressed;
-    if (options.max) {
-        keysPressed = 0;
-        options.keys.forEach((k)=>{if (KEYLOGGER.pressed[k]) keysPressed++});
-
-        if (keysPressed === options.max) {
-            return true;
-        } else {
-            return false;
+    let keysPressed = 0;
+    options.keys.forEach((k)=>{
+        if (KEYLOGGER.pressed[k]) {
+            keysPressed++
         }
-    } else {
+    });
+
+    let success = false;
+    if (options.pressAll) {
+        success = keysPressed === options.keys.length;
+    } else if (options.keys.length === 0) {
+        success = true;
+    } else if (!options.pressAll) {
+        success = keysPressed > 0;
+    }
+
+    if (success) {
         return true;
+    } else {
+        return false;
     }
 };
 

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import Eventador, {getDefaultOptions} from './Eventador.js';
 
-export const EVENTADORSTRING = 'eventador-';
+//export const EVENTADORSTRING = 'eventador-';
 export const MAXLOGSIZE = 5;
 
 class Listener {
@@ -26,8 +26,8 @@ class Listener {
     }
 
     sendIt(e) {
-        this.isTerminated = this.callback(e);
-        this.update(e);
+        this.callback(e);
+        this.isTerminated = this.update(e);
 
         return this.isTerminated;
     }
@@ -36,7 +36,8 @@ class Listener {
         this.event = stringToEventador(e.type);
         this.target = e.target;
 
-        this.callLog.push(new CallInfo(e, this.calls++));
+        this.calls++;
+        this.callLog.push(new CallInfo(e, this.calls));
 
         //helps prevent slugishness
         if (this.callLog.length >= MAXLOGSIZE) this.callLog.unshift();
@@ -50,9 +51,9 @@ class Listener {
 }
 
 function stringToEventador(s){
-    if (!/eventador/.test(s)) {
-        s = EVENTADORSTRING + s;
-    }
+    //if (!/eventador/.test(s)) {
+    //    s = EVENTADORSTRING + s;
+    //}
 
     return s;
 }

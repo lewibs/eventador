@@ -19,13 +19,13 @@ EventTarget.prototype.addEventListener = function(event, callback, options) {
         //it looks like this issue does not exist in vanilla js. which implys that programs that do not use a virtual dom
         //wont have this issue. However this is obviously a lazy solution. as a result. the event name was given an
         //name unique to eventador when it was made in eventador. If it fails to have that name it will be assumed that the event should be handled
-        //normally.
-        console.log(event, callback, options);
-        if (/eventador-/.test(event)) {
-            Eventador.addListener(event, callback, options);
-        } else { //this is the regular way
+        //normally. This may be the cause of breakage for other frameworks
+        //a react event
+        if (/react-/.test(event)) {
             return this.eventadorAddEventListener(event, callback, options, this);
         }
+
+        return Eventador.addListener(event, callback, options);
     } catch (e) {
         return this.eventadorAddEventListener(failedEvent, failedCallback, failedOptions);
     }
