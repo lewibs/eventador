@@ -84,28 +84,40 @@ This is an integer (or boolian false) to discribe the maximum number of times th
 ### target : EventTarget default window
 this is the target that the function will be acting on. If it is not given then the event is set as a global event.
 
-## functionality
+### id : string
+this is the id that is attached to an event. It is a guid string that can be used to remove the listener.
 
-### Eventador.addListener(event, callback, options, target)
+
+## functionality
+These are the primary functions that can be used in Eventador knowingly. Unlike the prototypes with which the user is unaware of their input being filtered. On top of that it can be imported as an individual function rather then attacked as a static to the Eventador class.
+
+### Eventador.addListener(event, callback, options, target) returns id
+This is similar to EventTarget.prototype.addEventListener. The only difference is that it defaults to window.
 
 ### Eventador.removeListener(id) returns bool
+This is used to remove an event from the program. If a valid guid is passed into the id the event will be removed and a true will be returned if it was a success.
 
 ### Eventador.makeCallback(callback, options) returns function
+This is used with the ONLY intention of being added inline to an HTMLElement. It takes the callback and options, then based on the Event passed in it determines the event and also target thus making eventador able to be used in large scale frameworks such as react.
 
 ## prototypes
+these are the chained prototypes that make this software so sexy. This stuff gets seemlessly added into the program and you dont even notice it.
 
 ### EventTarget.prototype.addEventListener(event, callback, options) returns id
+This is not the same prototype that can be found in https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener 
+What it is, is a chain that modifies input and handles options before passing it to the real event listener which can be found in 
+EventTarget.prototype.eventadorClasicAddEventListener, which was named like that in order to avoid prototype conflict.
+The id which is returned can be used later to identify the event or remove it from the target.
 
 ### EventTarget.prototype.removeEventListener(event, callback, options) returns id
-
-### EventTarget.prototype.eventadorClasicAddEventListener(event, callback, options)
-
-### EventTarget.prototype.eventadorClasicRemoveEventListener(event, callback, options)
+This is not the same prototype that can be found in https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener 
+What it is, is a chain that modifies input and handles options before passing it to the real event listener which can be found in 
+EventTarget.prototype.eventadorClasicRemoveEventListener, which was named like that in order to avoid prototype conflict.
+The id which is returned can be used later to identify the event or remove it from the target.
 
 
 ## sources
 I personally belive that the best developers are the ones who choose to read documentation over stack everflow. Which is why I am linking the documents that I spent a good amount of time reading. On top of that calling things like EventTarget is really useful to hep undersdand the nitty grity.
-
 
 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 https://developer.mozilla.org/en-US/docs/Web/API/Event
