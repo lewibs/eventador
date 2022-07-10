@@ -15,18 +15,14 @@ const getDefaultOptions = ()=>{
     }))
 }
 
-const keylogger = new Keylogger();
+const KEYLOGGER = new Keylogger();
 
 class Eventador{
     static _listeners = {};
 
-    static addListener(event, dispatch, options, target=window) {
-
-        //in the case that we need to be backwards compatable
-        options = (typeof options === 'boolean')
-        ? Object.assign(getDefaultOptions(), {useCapture:options})
-        : Object.assign(getDefaultOptions(), options);
-        
+    static _makeListener(event, dispatch, options, target=window) {
+        options = formatOptions(options);
+            
         const listener = new Listener({
             target,
             event,
@@ -35,17 +31,7 @@ class Eventador{
         });
 
         let eventadorDispatch = (e) => {
-            //action prep
-            let keysPressed;
-            if (listener.options.max) {
-                keysPressed = 0;
-                listener.options.keys.forEach((k)=>{if (keylogger.pressed[k]) keysPressed++});
-            } else {
-                keysPressed = false;
-            }
-
-            //do action
-            if (keysPressed === listener.options.max) {
+            if (arePressed(listener.options)) {
                 dispatch(e);
                 listener.update(e);
             }
@@ -53,10 +39,16 @@ class Eventador{
 
         //must chain dispatch;
         listener.dispatch = eventadorDispatch;
-
-        this._listeners[listener.id] = listener.id;
         
-        listener.target.eventadorAddEventListener(event, dispatch, options);
+        //log that
+        this._listeners[listener.id] = listener;
+        return listener;
+    }
+
+    static addListener(event, dispatch, options, target=window) {
+        let listener = this._makeListener(event, dispatch, options, target);
+
+        listener.target.eventadorAddEventListener(listener.event, listener.dispatch, listener.options);
         
         return listener.id;
     }
@@ -71,7 +63,45 @@ class Eventador{
 
         return false;
     }
+
+    static makeDispatch(dispatch, options) {
+        options = formatOptions(options);
+        const listener = this._makeListener('dummy', dispatch, options, 'dummy');
+
+        return (e)=>{
+            let l = this._listeners[listener.id];
+            l.event = e.type;
+            l.target = e.target;
+
+            if (arePressed(listener.options) && !listener.isTerminated) {
+                listener.sendIt(e);
+            }
+        }
+    }
 }
+
+function arePressed(options) {
+    let keysPressed;
+    if (options.max) {
+        keysPressed = 0;
+        options.keys.forEach((k)=>{if (KEYLOGGER.pressed[k]) keysPressed++});
+
+        if (keysPressed === options.max) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
+};
+
+//allows for backward compatability
+function formatOptions(options) {
+    return (typeof options === 'boolean')
+    ? Object.assign(getDefaultOptions(), {useCapture:options})
+    : Object.assign(getDefaultOptions(), options);
+};
 
 export {
     getDefaultOptions,

@@ -6,7 +6,7 @@ EventTarget.prototype.eventadorRemoveEventListener = EventTarget.prototype.remov
 
 //these are only to filter to eventador
 EventTarget.prototype.removeEventListener = function(event, dispatch, options) { 
-    return this.eventador.clasicRemoveEventListener(event, dispatch, options);
+    return this.eventadorRemoveEventListener(event, dispatch, options);
 }
 
 EventTarget.prototype.addEventListener = function(event, dispatch, options) {
@@ -17,6 +17,6 @@ EventTarget.prototype.addEventListener = function(event, dispatch, options) {
     try {
         return Eventador.addListener(event, dispatch, options, this);
     } catch (e) {
-        return this.eventador.clasicAddEventListener(failedEvent, failedDispatch, failedOptions);
+        return this.eventadorAddEventListener(failedEvent, failedDispatch, failedOptions);
     }
 }

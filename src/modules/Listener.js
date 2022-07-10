@@ -12,17 +12,28 @@ class Listener {
         }
         
         this.isListener = true; 
-        this.target = props.target       || window;
-        this.event = props.event         || undefined;
-        this.dispatch = props.dispatch   || undefined;
-        this.options = props.options     || getDefaultOptions();
-        this.id = props.id               || uuidv4();
-        this.calls = props.calls         || 0;
-        this.callLog = props.callLog     || [];
-        this.callTimes = props.callTimes || [];
+        this.target = props.target              || window;
+        this.event = props.event                || undefined;
+        this.dispatch = props.dispatch          || undefined;
+        this.options = props.options            || getDefaultOptions();
+        this.id = props.id                      || uuidv4();
+        this.calls = props.calls                || 0;
+        this.callLog = props.callLog            || [];
+        this.callTimes = props.callTimes        || [];
+        this.isTerminated = props.isTerminated  || false;
+    }
+
+    sendIt(e) {
+        this.isTerminated = this.dispatch(e);
+        this.update(e);
+
+        return this.isTerminated;
     }
 
     update(e) {
+        this.event = e.type;
+        this.target = e.target;
+
         this.callLog.push(new CallInfo(e, this.calls++));
 
         if (this.calls === this.options.max) {
