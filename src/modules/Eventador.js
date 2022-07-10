@@ -48,7 +48,7 @@ class Eventador{
     static addListener(event, callback, options, target=window) {
         let listener = this._makeListener(event, callback, options, target);
 
-        listener.target.eventadorAddEventListener(listener.event, listener.callback, listener.options);
+        listener.target.eventadorClasicAddEventListener(listener.event, listener.callback, listener.options);
         
         return listener.id;
     }
@@ -57,7 +57,7 @@ class Eventador{
         let listener = this._listeners[id];
     
         if (listener) {
-            listener.target.eventadorRemoveEventListener(listener.event, listener.callback, listener.options);
+            listener.target.eventadorClasicRemoveEventListener(listener.event, listener.callback, listener.options);
             return true;
         }
 
