@@ -1,17 +1,17 @@
 import './prototypes/EventTarget.js';
 import Eventador from "./modules/Eventador.js";
 
-const addListener = (event, dispach, options, target)=>{return Eventador.addListener(event, dispach, options, target)};
+const addListener = (event, callback, options, target)=>{return Eventador.addListener(event, callback, options, target)};
 
 const removeListener = (id)=>{return Eventador.removeListener(id)};
 
-const makeDispatch = (dispach, options)=>{return Eventador.makeDispach(dispach, options)};
+const makeCallback = (callback, options)=>{return Eventador.makeDispach(callback, options)};
 
 export {
     Eventador,
     addListener,
     removeListener,
-    makeDispatch,
+    makeCallback,
 };
 
 export default Eventador;
