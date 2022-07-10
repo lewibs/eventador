@@ -1,12 +1,13 @@
 {
   "name": "eventador",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "for making those pesky events sexy",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": ["eventador", "Eventador", "EventTarget", "prototypes", "HTMLElement", "events", "listeners", "addEventListener", "removeEventListener", "options", "sexy"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lewibs/eventador.git"
