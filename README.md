@@ -2,7 +2,7 @@
 This package is used to give eventListeners more robust options while maintaining backwards compatibility. Meaning your program can have this added in and it will run smoothly. On top of that it makes removing eventListeners much easier because of guids assigned to each event. :) <br/>
 
 <p align="center">
-  <img src="../images/eventador.png" />
+  <img src="https://github.com/lewibs/eventador/blob/main/images/eventador.png?raw=true" />
 </p>
 
 ## installation
