@@ -123,9 +123,9 @@ The id which is returned can be used later to identify the event or remove it fr
 ## sources
 I personally believe that the best developers are the ones who choose to read documentation over stack overflow. Which is why I am linking the documents that I spent a good amount of time reading. On top of that, calling things like EventTarget is really useful to help understand the nitty gritty.
 
-https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-https://developer.mozilla.org/en-US/docs/Web/API/Event
-https://developer.mozilla.org/en-US/docs/Web/API/Event/type
-https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener <br/>
+https://developer.mozilla.org/en-US/docs/Web/API/Event <br/>
+https://developer.mozilla.org/en-US/docs/Web/API/Event/type <br/>
+https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement <br/>
 
 
