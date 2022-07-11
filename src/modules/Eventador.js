@@ -48,7 +48,7 @@ class Eventador{
     static addListener(event, callback, options, target=window) {
         let listener = this._makeListener(event, callback, options, target);
 
-        listener.target.eventadorClasicAddEventListener(listener.event, listener.callback, listener.options);
+        listener.target.addEventListener(listener.event, listener.callback, listener.options);
         
         return listener.id;
     }
@@ -57,7 +57,7 @@ class Eventador{
         let listener = this._listeners[id];
     
         if (listener) {
-            listener.target.eventadorClasicRemoveEventListener(listener.event, listener.callback, listener.options);
+            listener.target.removeEventListener(listener.event, listener.callback, listener.options);
             return true;
         }
 
@@ -73,38 +73,16 @@ class Eventador{
                 throw new Error('Eventador: makeCallBack must be called within a event trigger on an HTMLElement');
             }
 
-            if (arePressed(listener.options) && listener.isTerminated === false) {
-                listener.sendIt(e);
+            listener.sendIt(e)
+
+            if (listener.toTerminate) {
+                return Eventador.removeListener(listener.id);
             }
         }
 
         return eventadorCallback;
     }
 }
-
-function arePressed(options) {
-    let keysPressed = 0;
-    options.keys.forEach((k)=>{
-        if (KEYLOGGER.pressed[k]) {
-            keysPressed++
-        }
-    });
-
-    let success = false;
-    if (options.pressAll) {
-        success = keysPressed === options.keys.length;
-    } else if (options.keys.length === 0) {
-        success = true;
-    } else if (!options.pressAll) {
-        success = keysPressed > 0;
-    }
-
-    if (success) {
-        return true;
-    } else {
-        return false;
-    }
-};
 
 //allows for backward compatability
 function formatOptions(options) {

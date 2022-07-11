@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import Eventador, {getDefaultOptions} from './Eventador.js';
+import {getDefaultOptions} from './Eventador.js';
 
 //export const EVENTADORSTRING = 'eventador-';
 export const MAXLOGSIZE = 5;
@@ -16,24 +16,30 @@ class Listener {
         
         this.isListener = true; 
         this.target = props.target                  || window;
-        this.event = stringToEventador(props.event) || undefined;
+        this.event = props.event                    || undefined;
         this.callback = props.callback              || undefined;
         this.options = props.options                || getDefaultOptions();
         this.id = props.id                          || uuidv4();
         this.calls = props.calls                    || 0;
         this.callLog = props.callLog                || [];
-        this.isTerminated = props.isTerminated      || false;
+        this.toTerminate = props.toTerminate        || false;
     }
 
     sendIt(e) {
-        this.callback(e);
-        this.isTerminated = this.update(e);
+        if (this.toTerminate) {
+            return true;
+        }
 
-        return this.isTerminated;
+        if (arePressed(this.options)) {
+            this.callback(e);
+            this.update(e);
+        }
+
+        return this.toTerminate;
     }
 
     update(e) {
-        this.event = stringToEventador(e.type);
+        this.event = e.type;
         this.target = e.target;
 
         this.calls++;
@@ -43,19 +49,9 @@ class Listener {
         if (this.callLog.length >= MAXLOGSIZE) this.callLog.unshift();
 
         if (this.calls === this.options.max) {
-            return Eventador.removeListener(this.id);
-        } else {
-            return false;
+            this.toTerminate = true;
         }
     }
-}
-
-function stringToEventador(s){
-    //if (!/eventador/.test(s)) {
-    //    s = EVENTADORSTRING + s;
-    //}
-
-    return s;
 }
 
 class CallInfo {
@@ -66,5 +62,29 @@ class CallInfo {
         this.callNo = callNo;
     }
 }
+
+function arePressed(options) {
+    let keysPressed = 0;
+    options.keys.forEach((k)=>{
+        if (KEYLOGGER.pressed[k]) {
+            keysPressed++
+        }
+    });
+
+    let success = false;
+    if (options.pressAll) {
+        success = keysPressed === options.keys.length;
+    } else if (options.keys.length === 0) {
+        success = true;
+    } else if (!options.pressAll) {
+        success = keysPressed > 0;
+    }
+
+    if (success) {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 export default Listener;
