@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import {getDefaultOptions} from './Eventador.js';
+import Keylogger from "lewibs-keylogger";
 
 //export const EVENTADORSTRING = 'eventador-';
 export const MAXLOGSIZE = 5;
+export const KEYLOGGER = new Keylogger();
 
 class Listener {
     constructor(props={}) {
@@ -25,17 +27,15 @@ class Listener {
         this.toTerminate = props.toTerminate        || false;
     }
 
-    sendIt(e) {
-        if (this.toTerminate) {
+    isSendable() {
+        if (arePressed(this.options) 
+            && !this.toTerminate
+            && this.calls !== this.options.max) {
+
             return true;
+        } else {
+            return false;
         }
-
-        if (arePressed(this.options)) {
-            this.callback(e);
-            this.update(e);
-        }
-
-        return this.toTerminate;
     }
 
     update(e) {

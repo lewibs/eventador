@@ -1,5 +1,5 @@
 # eventador
-This package is used to give eventListeners more robust options while maintaining backwards compatibility. Meaning your program can have this added in and it will run smoothly. On top of that it makes removing eventListeners much easier because of the guids assigned to each event. :) <br/>
+This package is used to give eventListeners more robust options. On top of that it makes removing eventListeners much easier because of the guids assigned to each event. :) <br/>
 
 <p align="center">
   <img src="https://github.com/lewibs/eventador/blob/main/images/eventador.png?raw=true" />
@@ -24,14 +24,14 @@ Here is a short example of use
   let idB;
 
   //this is the most basic way that it can be used
-  idA = document.getElementById("id").addEventListener(event, callback, options);
-  idB = window.addEventListener(event, callback, options);
+  idA = document.getElementById("id").evntadorListener(event, callback, options);
+  idB = window.eventadorListener(event, callback, options);
 
   Eventador.removeListener(idA);
   Eventador.removeListener(idB);
 
   //These are the stranger ways
-  idA = Eventador.addListener(event, callback, options, target);
+  idA = Eventador.addListener(target,event, callback, options);
 
   Eventador.removeListener(idA);
 
@@ -93,7 +93,7 @@ this is the id that is attached to an event. It is a guid string that can be use
 
 
 ## functionality
-These are the primary functions that can be used in Eventador knowingly. Unlike the prototypes with which the user is unaware of their input being filtered. On top of that it can be imported as an individual function rather than attacked as a static to the Eventador class.
+These are the primary functions that can be used in Eventador knowingly. Unlike the prototypes with which the user is unaware of their input being filtered. On top of that it can be imported as an individual function rather than attached as a static to the Eventador class.
 
 ### Eventador.addListener(event, callback, options, target) returns id
 This is similar to EventTarget.prototype.addEventListener. The only difference is that it defaults to window.
@@ -110,13 +110,13 @@ These are the chained prototypes that make this software so sexy. This stuff get
 ### EventTarget.prototype.addEventListener(event, callback, options) returns id
 This is not the same prototype that can be found in https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 What it is, is a chain that modifies input and handles options before passing it to the real event listener which can be found in
-EventTarget.prototype.eventadorClasicAddEventListener, which was named like that in order to avoid prototype conflict.
+EventTarget.prototype.eventadorClassicAddEventListener, which was named like that in order to avoid prototype conflict.
 The id which is returned can be used later to identify the event or remove it from the target.
 
 ### EventTarget.prototype.removeEventListener(event, callback, options) returns id
 This is not the same prototype that can be found in https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
 What it is, is a chain that modifies input and handles options before passing it to the real event listener which can be found in
-EventTarget.prototype.eventadorClasicRemoveEventListener, which was named like that in order to avoid prototype conflict.
+EventTarget.prototype.eventadorClassicRemoveEventListener, which was named like that in order to avoid prototype conflict.
 The id which is returned can be used later to identify the event or remove it from the target.
 
 

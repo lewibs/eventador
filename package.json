@@ -1,6 +1,6 @@
 {
   "name": "eventador",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "for making those pesky events sexy",
   "main": "src/index.js",
   "type": "module",

@@ -1,4 +1,3 @@
-import Keylogger from "lewibs-keylogger";
 import Listener from "./Listener.js";
 
 const getDefaultOptions = ()=>{
@@ -16,37 +15,41 @@ const getDefaultOptions = ()=>{
     }))
 }
 
-const KEYLOGGER = new Keylogger();
-
 class Eventador{
     static _listeners = {};
 
-    static _makeListener(event, callback, options, target=window) {
+    static #makeListener(event, callback, options, target=window) {
         options = formatOptions(options);
-            
+        
         const listener = new Listener({
             target,
             event,
             callback,
             options,
         });
-
-        let eventadorCallback = (e) => {
-            if (arePressed(listener.options)) {
-                callback(e);
-            }
-        }
-
-        //must chain callback;
-        listener.callback = eventadorCallback;
         
         //log that
         this._listeners[listener.id] = listener;
         return listener;
     }
 
-    static addListener(event, callback, options, target=window) {
-        let listener = this._makeListener(event, callback, options, target);
+    static addListener(target=window, event, callback, options) {
+
+        let listener = this.#makeListener(event, callback, options, target);
+        
+        let eventadorCallback = function(e) {
+
+            if (listener.isSendable()) {
+                callback(e);
+                listener.update(e);
+            }
+
+            if (listener.toTerminate) {
+                return Eventador.removeListener(listener.id);
+            }
+        }
+
+        listener.callback = eventadorCallback;
 
         listener.target.addEventListener(listener.event, listener.callback, listener.options);
         
@@ -66,14 +69,18 @@ class Eventador{
 
     static makeCallback(callback, options) {
         options = formatOptions(options);
-        const listener = this._makeListener('dummy', callback, options, 'dummy');
+        const listener = this.#makeListener('dummy', callback, options, 'dummy');
+
 
         function eventadorCallback(e) {
             if (e===undefined){
                 throw new Error('Eventador: makeCallBack must be called within a event trigger on an HTMLElement');
             }
 
-            listener.sendIt(e)
+            if (listener.isSendable()) {
+                callback(e);
+                listener.update(e);
+            }
 
             if (listener.toTerminate) {
                 return Eventador.removeListener(listener.id);
