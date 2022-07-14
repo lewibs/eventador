@@ -24,7 +24,7 @@ Here is a short example of use
   let idB;
 
   //this is the most basic way that it can be used
-  idA = document.getElementById("id").evntadorListener(event, callback, options);
+  idA = document.getElementById("id").eventadorListener(event, callback, options);
   idB = window.eventadorListener(event, callback, options);
 
   Eventador.removeListener(idA);
